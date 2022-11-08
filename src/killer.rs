@@ -1,7 +1,12 @@
 fn kill_pid(pid: u32) {
-    unsafe {
-        libc::kill(pid as i32, libc::SIGKILL);
-    }
+    use nix::{
+        sys::signal::{kill, Signal},
+        unistd::Pid,
+    };
+
+    let pid = Pid::from_raw(pid as i32);
+
+    kill(pid, Signal::SIGKILL).unwrap();
 }
 
 fn timeout_killer(pid: u32, timeout: u64) {
@@ -26,10 +31,10 @@ mod tests {
             .output()
             .expect("Compile Error");
 
-        let child = Command::new("./test_cases/bin/cpp/infinite_loop")
+        Command::new("./test_cases/bin/cpp/infinite_loop")
             .spawn()
-            .unwrap();
-        child.id()
+            .unwrap()
+            .id()
     }
     #[test]
     fn test_kill_pid() {
