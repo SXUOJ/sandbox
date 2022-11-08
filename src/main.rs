@@ -3,7 +3,6 @@ use clap::{arg, value_parser, Command};
 
 mod config;
 mod killer;
-mod result;
 
 fn main() {
     let cmd = Command::new("Judger")
@@ -44,22 +43,25 @@ fn main() {
 }
 
 fn parse_config(matches: &clap::ArgMatches) -> config::Config {
-    let mut config = config::Config::new();
+    let mut config = config::Config::default();
 
     if matches.contains_id("bin_path") {
-        config.bin_path = matches.get_one::<String>("bin_path").unwrap();
+        config.bin_path = matches.get_one::<String>("bin_path").unwrap().to_string();
     }
 
     if matches.contains_id("input_path") {
-        config.input_path = matches.get_one::<String>("input_path").unwrap();
+        config.input_path = matches.get_one::<String>("input_path").unwrap().to_string();
     }
 
     if matches.contains_id("output_path") {
-        config.output_path = matches.get_one::<String>("output_path").unwrap();
+        config.output_path = matches
+            .get_one::<String>("output_path")
+            .unwrap()
+            .to_string();
     }
 
     if matches.contains_id("error_path") {
-        config.error_path = matches.get_one::<String>("error_path").unwrap();
+        config.error_path = matches.get_one::<String>("error_path").unwrap().to_string();
     }
 
     if matches.contains_id("real_time_limit") {
