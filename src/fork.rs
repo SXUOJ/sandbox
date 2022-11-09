@@ -1,10 +1,31 @@
 pub fn after_fork(config: &crate::config::Config) -> Result<(), crate::error::CoreError> {
+    use nix::sys::resource::{setrlimit, Resource};
+    setrlimit(
+        Resource::RLIMIT_CPU,
+        config.cpu_time_limit / 1000,
+        config.cpu_time_limit / 1000,
+    )?;
+
+    setrlimit(Resource::RLIMIT_AS, config.max_memory, config.max_memory)?;
+    setrlimit(Resource::RLIMIT_STACK, config.max_stack, config.max_stack)?;
+    setrlimit(
+        Resource::RLIMIT_NPROC,
+        config.max_process_number,
+        config.max_process_number,
+    )?;
+    setrlimit(
+        Resource::RLIMIT_FSIZE,
+        config.max_output_size,
+        config.max_output_size,
+    )?;
+
     use std::{
         ffi::CString,
         fs::File,
         io,
         os::unix::io::{AsRawFd, RawFd},
     };
+
     let input_file = File::open(&config.input_path)?;
     let output_file = File::options()
         .write(true)
