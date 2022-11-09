@@ -9,7 +9,7 @@ fn kill_pid(pid: u32) {
     kill(pid, Signal::SIGKILL).unwrap();
 }
 
-fn timeout_killer(pid: u32, timeout: u64) {
+pub fn timeout_killer(pid: u32, timeout: u64) {
     use std::{thread::sleep, time::Duration};
 
     sleep(Duration::from_millis(timeout));

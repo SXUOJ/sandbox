@@ -1,8 +1,12 @@
+use crate::runner::run;
 #[warn(dead_code)]
 use clap::{arg, value_parser, Command};
 
 mod config;
+mod error;
+mod fork;
 mod killer;
+mod runner;
 
 fn main() {
     let cmd = Command::new("Judger")
@@ -19,27 +23,29 @@ fn main() {
         .arg(arg!(-e --error_path  <ERROR_PATH> "Error Path.").value_parser(value_parser!(String)))
         .arg(
             arg!(-r --real_time_limit  <REAL_TIME_LIMIT> "Real time limit.")
-                .value_parser(value_parser!(u32)),
+                .value_parser(value_parser!(u64)),
         )
         .arg(
             arg!(-c --cpu_time_limit <CPU_TIME_LIMIT> "CPU time limit.")
-                .value_parser(value_parser!(u32)),
+                .value_parser(value_parser!(u64)),
         )
-        .arg(arg!(-m --max_memory <MAX_MEMORY> "Max memory.").value_parser(value_parser!(u32)))
-        .arg(arg!(-s --max_stack <MAX_STACK> "Max stack.").value_parser(value_parser!(u32)))
+        .arg(arg!(-m --max_memory <MAX_MEMORY> "Max memory.").value_parser(value_parser!(u64)))
+        .arg(arg!(-s --max_stack <MAX_STACK> "Max stack.").value_parser(value_parser!(u64)))
         .arg(
             arg!(-p --max_process_number <max_process_number> "Max process number.")
-                .value_parser(value_parser!(u32)),
+                .value_parser(value_parser!(u64)),
         )
         .arg(
             arg!(-z --max_output_size <MAX_OUTPUT_SIZE> "Max output size.")
-                .value_parser(value_parser!(u32)),
+                .value_parser(value_parser!(u64)),
         )
         .get_matches();
 
     let config = parse_config(&cmd);
 
     println!("{:?}", config);
+
+    run(&config);
 }
 
 fn parse_config(matches: &clap::ArgMatches) -> config::Config {
@@ -65,27 +71,27 @@ fn parse_config(matches: &clap::ArgMatches) -> config::Config {
     }
 
     if matches.contains_id("real_time_limit") {
-        config.real_time_limit = *matches.get_one::<u32>("real_time_limit").unwrap();
+        config.real_time_limit = *matches.get_one::<u64>("real_time_limit").unwrap();
     }
 
     if matches.contains_id("cpu_time_limit") {
-        config.cpu_time_limit = *matches.get_one::<u32>("cpu_time_limit").unwrap();
+        config.cpu_time_limit = *matches.get_one::<u64>("cpu_time_limit").unwrap();
     }
 
     if matches.contains_id("max_memory") {
-        config.max_memory = *matches.get_one::<u32>("max_memory").unwrap();
+        config.max_memory = *matches.get_one::<u64>("max_memory").unwrap();
     }
 
     if matches.contains_id("max_stack") {
-        config.max_stack = *matches.get_one::<u32>("max_stack").unwrap();
+        config.max_stack = *matches.get_one::<u64>("max_stack").unwrap();
     }
 
     if matches.contains_id("max_process_number") {
-        config.max_process_number = *matches.get_one::<u32>("max_process_number").unwrap();
+        config.max_process_number = *matches.get_one::<u64>("max_process_number").unwrap();
     }
 
     if matches.contains_id("max_output_size") {
-        config.max_output_size = *matches.get_one::<u32>("max_output_size").unwrap();
+        config.max_output_size = *matches.get_one::<u64>("max_output_size").unwrap();
     }
 
     config

@@ -5,10 +5,10 @@ pub struct Config {
     pub output_path: String,
     pub error_path: String,
 
-    pub real_time_limit: u32,
-    pub cpu_time_limit: u32,
-    pub max_memory: u32,
-    pub max_stack: u32,
-    pub max_process_number: u32,
-    pub max_output_size: u32,
+    pub real_time_limit: u64,
+    pub cpu_time_limit: u64,
+    pub max_memory: u64,
+    pub max_stack: u64,
+    pub max_process_number: u64,
+    pub max_output_size: u64,
 }
