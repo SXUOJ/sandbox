@@ -1,3 +1,4 @@
+use crate::result::infer_result;
 use crate::runner::run;
 #[warn(dead_code)]
 use clap::{arg, value_parser, Command};
@@ -6,6 +7,7 @@ mod config;
 mod error;
 mod fork;
 mod killer;
+mod result;
 mod runner;
 
 fn main() {
@@ -42,11 +44,10 @@ fn main() {
         .get_matches();
 
     let config = parse_config(&cmd);
-
     println!("{:?}", config);
 
-    let result = run(&config).unwrap();
-    println!("{:?}", result);
+    let raw_judge_result = run(&config).unwrap().unwrap();
+    println!("{:?}", infer_result(&raw_judge_result));
 }
 
 fn parse_config(matches: &clap::ArgMatches) -> config::Config {

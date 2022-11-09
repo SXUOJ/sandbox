@@ -1,16 +1,17 @@
 use nix::libc::{c_int, rusage, WEXITSTATUS, WTERMSIG};
 use std::time::Duration;
 #[derive(Debug)]
-pub struct RawJudgeResultInfo {
+pub struct RawJudgeResult {
     pub exit_status: c_int,
     pub exit_signal: c_int,
     pub exit_code: c_int,
     pub real_time_cost: Duration,
     pub resource_usage: rusage,
 }
+
 pub fn run(
     config: &crate::config::Config,
-) -> Result<Option<RawJudgeResultInfo>, crate::error::CoreError> {
+) -> Result<Option<RawJudgeResult>, crate::error::CoreError> {
     use nix::unistd::{fork, ForkResult};
     use std::time::Instant;
 
@@ -31,7 +32,7 @@ pub fn run(
                 wait4(child.as_raw() as i32, &mut status, WSTOPPED, &mut usage);
             }
 
-            Ok(Some(RawJudgeResultInfo {
+            Ok(Some(RawJudgeResult {
                 exit_status: status,
                 exit_signal: WTERMSIG(status),
                 exit_code: WEXITSTATUS(status),
@@ -79,6 +80,8 @@ fn default_rusage() -> nix::libc::rusage {
 #[cfg(test)]
 pub mod runner {
     use super::*;
+    use crate::result::infer_result;
+
     fn compile(bin_name: &str, src_name: &str) {
         use std::process::Command;
 
@@ -105,14 +108,14 @@ pub mod runner {
             error_path: String::from("./test_cases/src/cpp/hello0.err"),
             real_time_limit: 1000,
             cpu_time_limit: 1000,
-            max_memory: 128 * 1024,
+            max_memory: 128 * 1024 * 1024,
             max_stack: 16 * 1024,
             max_process_number: 1,
-            max_output_size: 8 * 1024,
+            max_output_size: 256 * 1024,
         };
 
-        let res = run(&runner_config).unwrap();
-        println!("{:?}", res);
+        let res = run(&runner_config).unwrap().unwrap();
+        println!("{:?}", infer_result(&res));
     }
 
     #[test]
@@ -128,14 +131,14 @@ pub mod runner {
             output_path: String::from("./test_cases/src/cpp/hello0.out"),
             error_path: String::from("./test_cases/src/cpp/hello0.err"),
             real_time_limit: 5000,
-            cpu_time_limit: 1000,
+            cpu_time_limit: 3000,
             max_memory: 128 * 1024,
             max_stack: 16 * 1024,
             max_process_number: 1,
-            max_output_size: 8 * 1024,
+            max_output_size: 256 * 1024,
         };
 
-        let res = run(&runner_config).unwrap();
-        println!("{:?}", res);
+        let res = run(&runner_config).unwrap().unwrap();
+        println!("{:?}", infer_result(&res));
     }
 }
