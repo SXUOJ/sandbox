@@ -55,7 +55,7 @@ pub fn child_process(config: &crate::config::Config) -> Result<(), crate::error:
     Ok(())
 }
 
-#[cfg(target_os = "macos")]
+#[cfg(not(target_os = "linux"))]
 fn are_you_on_linux(config: &crate::config::Config) -> Result<(), nix::errno::Errno> {
     use nix::sys::resource::{setrlimit, Resource};
     setrlimit(
