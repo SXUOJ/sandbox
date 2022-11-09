@@ -43,7 +43,7 @@ mod tests {
     }
 
     #[test]
-    fn test_timeout_killer() {
+    fn test_kill_timeout() {
         let pid = start_process();
         timeout_killer(pid, 1000);
     }
