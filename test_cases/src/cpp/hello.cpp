@@ -5,6 +5,8 @@ int main()
 {
 	int n;
 	cin >> n;
-	cout << "hello" << endl;
+	while (n--) {
+		cout << "hello" << endl;
+	}
 	return 0;
 }

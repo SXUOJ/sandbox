@@ -6,7 +6,7 @@ fn kill_pid(pid: u32) {
 
     let pid = Pid::from_raw(pid as i32);
 
-    kill(pid, Signal::SIGKILL).unwrap();
+    let _ = kill(pid, Signal::SIGKILL);
 }
 
 pub fn timeout_killer(pid: u32, timeout: u64) {

@@ -45,7 +45,8 @@ fn main() {
 
     println!("{:?}", config);
 
-    run(&config);
+    let result = run(&config).unwrap();
+    println!("{:?}", result);
 }
 
 fn parse_config(matches: &clap::ArgMatches) -> config::Config {

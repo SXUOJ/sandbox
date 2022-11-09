@@ -1,4 +1,16 @@
-pub fn run(config: &crate::config::Config) -> Result<Option<()>, crate::error::CoreError> {
+use nix::libc::{c_int, rusage, WEXITSTATUS, WTERMSIG};
+use std::time::Duration;
+#[derive(Debug)]
+pub struct RawJudgeResultInfo {
+    pub exit_status: c_int,
+    pub exit_signal: c_int,
+    pub exit_code: c_int,
+    pub real_time_cost: Duration,
+    pub resource_usage: rusage,
+}
+pub fn run(
+    config: &crate::config::Config,
+) -> Result<Option<RawJudgeResultInfo>, crate::error::CoreError> {
     use nix::unistd::{fork, ForkResult};
     use std::time::Instant;
 
@@ -19,7 +31,13 @@ pub fn run(config: &crate::config::Config) -> Result<Option<()>, crate::error::C
                 wait4(child.as_raw() as i32, &mut status, WSTOPPED, &mut usage);
             }
 
-            Ok(None)
+            Ok(Some(RawJudgeResultInfo {
+                exit_status: status,
+                exit_signal: WTERMSIG(status),
+                exit_code: WEXITSTATUS(status),
+                real_time_cost: start.elapsed(),
+                resource_usage: usage,
+            }))
         }
         Ok(ForkResult::Child) => {
             crate::fork::after_fork(config)?;
@@ -61,26 +79,30 @@ fn default_rusage() -> nix::libc::rusage {
 #[cfg(test)]
 pub mod runner {
     use super::*;
-    fn compile() {
+    fn compile(bin_name: &str, src_name: &str) {
         use std::process::Command;
 
         Command::new("g++")
             .arg("-g")
             .arg("-o")
-            .arg("./test_cases/bin/cpp/hello")
-            .arg("./test_cases/src/cpp/hello.cpp")
+            .arg(bin_name)
+            .arg(src_name)
             .output()
             .expect("Compile Error");
     }
 
     #[test]
-    fn test_run() {
-        compile();
+    fn test_read_write() {
+        compile(
+            "./test_cases/bin/cpp/hello",
+            "./test_cases/src/cpp/hello.cpp",
+        );
+
         let runner_config = crate::config::Config {
             bin_path: String::from("./test_cases/bin/cpp/hello"),
-            input_path: String::from("./test_cases/src/hello0.in"),
-            output_path: String::from("./test_cases/src/hello0.out"),
-            error_path: String::from(""),
+            input_path: String::from("./test_cases/src/cpp/hello0.in"),
+            output_path: String::from("./test_cases/src/cpp/hello0.out"),
+            error_path: String::from("./test_cases/src/cpp/hello0.err"),
             real_time_limit: 1000,
             cpu_time_limit: 1000,
             max_memory: 128 * 1024,
@@ -88,6 +110,32 @@ pub mod runner {
             max_process_number: 1,
             max_output_size: 8 * 1024,
         };
-        run(&runner_config);
+
+        let res = run(&runner_config).unwrap();
+        println!("{:?}", res);
+    }
+
+    #[test]
+    fn test_infinite_loop() {
+        compile(
+            "./test_cases/bin/cpp/infinite_loop",
+            "./test_cases/src/cpp/infinite_loop.cpp",
+        );
+
+        let runner_config = crate::config::Config {
+            bin_path: String::from("./test_cases/bin/cpp/infinite_loop"),
+            input_path: String::from("./test_cases/src/cpp/hello0.in"),
+            output_path: String::from("./test_cases/src/cpp/hello0.out"),
+            error_path: String::from("./test_cases/src/cpp/hello0.err"),
+            real_time_limit: 5000,
+            cpu_time_limit: 1000,
+            max_memory: 128 * 1024,
+            max_stack: 16 * 1024,
+            max_process_number: 1,
+            max_output_size: 8 * 1024,
+        };
+
+        let res = run(&runner_config).unwrap();
+        println!("{:?}", res);
     }
 }
