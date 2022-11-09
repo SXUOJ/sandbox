@@ -41,7 +41,7 @@ pub fn run(
             }))
         }
         Ok(ForkResult::Child) => {
-            crate::fork::after_fork(config)?;
+            crate::child::child_process(config)?;
             Ok(None)
         }
         Err(_) => {
@@ -78,7 +78,7 @@ fn default_rusage() -> nix::libc::rusage {
 }
 
 #[cfg(test)]
-pub mod runner {
+mod tests {
     use super::*;
     use crate::result::infer_result;
 
@@ -102,6 +102,7 @@ pub mod runner {
         );
 
         let runner_config = crate::config::Config {
+            code_type: String::from("CPP"),
             bin_path: String::from("./test_cases/bin/cpp/hello"),
             input_path: String::from("./test_cases/src/cpp/hello0.in"),
             output_path: String::from("./test_cases/src/cpp/hello0.out"),
@@ -126,6 +127,7 @@ pub mod runner {
         );
 
         let runner_config = crate::config::Config {
+            code_type: String::from("CPP"),
             bin_path: String::from("./test_cases/bin/cpp/infinite_loop"),
             input_path: String::from("./test_cases/src/cpp/hello0.in"),
             output_path: String::from("./test_cases/src/cpp/hello0.out"),

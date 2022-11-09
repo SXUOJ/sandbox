@@ -9,7 +9,6 @@ pub struct JudgeResult {
 }
 
 pub fn infer_result(raw_result: &crate::runner::RawJudgeResult) -> JudgeResult {
-    println!("{:?}", raw_result.resource_usage);
     JudgeResult {
         exit_status: raw_result.exit_status as u64,
         exit_signal: raw_result.exit_signal as u64,

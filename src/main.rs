@@ -3,12 +3,15 @@ use crate::runner::run;
 #[warn(dead_code)]
 use clap::{arg, value_parser, Command};
 
+mod child;
 mod config;
 mod error;
-mod fork;
 mod killer;
 mod result;
 mod runner;
+
+#[cfg(target_os = "linux")]
+mod seccomp;
 
 fn main() {
     let cmd = Command::new("Judger")
@@ -16,6 +19,7 @@ fn main() {
         .about("A judger for SXU Online Judge")
         .version("0.0.1")
         .arg_required_else_help(true)
+        .arg(arg!(-t --code_type  <CODE_TYPE> "Code type.").value_parser(value_parser!(String)))
         .arg(arg!(-b --bin_path  <BIN_PATH> "Bin Path.").value_parser(value_parser!(String)))
         .arg(arg!(-i --input_path  <INPUT_PATH> "Input Path.").value_parser(value_parser!(String)))
         .arg(
@@ -52,6 +56,10 @@ fn main() {
 
 fn parse_config(matches: &clap::ArgMatches) -> config::Config {
     let mut config = config::Config::default();
+
+    if matches.contains_id("code_type") {
+        config.code_type = matches.get_one::<String>("code_type").unwrap().to_string();
+    }
 
     if matches.contains_id("bin_path") {
         config.bin_path = matches.get_one::<String>("bin_path").unwrap().to_string();

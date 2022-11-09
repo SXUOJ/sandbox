@@ -1,5 +1,6 @@
 #[derive(Debug, Default)]
 pub struct Config {
+    pub code_type: String,
     pub bin_path: String,
     pub input_path: String,
     pub output_path: String,

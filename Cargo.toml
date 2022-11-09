@@ -7,5 +7,5 @@ edition = "2021"
 
 [dependencies]
 clap="4.0.22"
-log = "0.4"
 nix="0.25"
+libseccomp="0.3"
