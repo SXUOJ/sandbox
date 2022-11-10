@@ -1,17 +1,9 @@
-use crate::result::infer_result;
-use crate::runner::run;
+use judger::config::Config;
+use judger::result::infer_result;
+use judger::runner::run;
+
 #[warn(dead_code)]
 use clap::{arg, value_parser, Command};
-
-mod child;
-mod config;
-mod error;
-mod killer;
-mod result;
-mod runner;
-
-#[cfg(target_os = "linux")]
-mod seccomp;
 
 fn main() {
     let cmd = Command::new("Judger")
@@ -45,6 +37,8 @@ fn main() {
             arg!(-z --max_output_size <MAX_OUTPUT_SIZE> "Max output size.")
                 .value_parser(value_parser!(u64)),
         )
+        .arg(arg!(--arg <ARG> "Args.").value_parser(value_parser!(String)))
+        .arg(arg!(--env <ENV> "Envs.").value_parser(value_parser!(String)))
         .get_matches();
 
     let config = parse_config(&cmd);
@@ -54,8 +48,8 @@ fn main() {
     println!("{:?}", infer_result(&raw_judge_result));
 }
 
-fn parse_config(matches: &clap::ArgMatches) -> config::Config {
-    let mut config = config::Config::default();
+fn parse_config(matches: &clap::ArgMatches) -> Config {
+    let mut config = Config::default();
 
     if matches.contains_id("code_type") {
         config.code_type = matches.get_one::<String>("code_type").unwrap().to_string();
@@ -102,6 +96,14 @@ fn parse_config(matches: &clap::ArgMatches) -> config::Config {
 
     if matches.contains_id("max_output_size") {
         config.max_output_size = *matches.get_one::<u64>("max_output_size").unwrap();
+    }
+
+    if matches.contains_id("arg") {
+        config.arg = matches.get_one::<String>("arg").unwrap().to_string();
+    }
+
+    if matches.contains_id("env") {
+        config.env = matches.get_one::<String>("env").unwrap().to_string();
     }
 
     config
