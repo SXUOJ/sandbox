@@ -2,7 +2,6 @@ use judger::config::Config;
 use judger::result::infer_result;
 use judger::runner::run;
 
-#[warn(dead_code)]
 use clap::{arg, value_parser, Command};
 
 fn main() {
@@ -45,7 +44,7 @@ fn main() {
     println!("{:?}", config);
 
     let raw_judge_result = run(&config).unwrap().unwrap();
-    println!("{:?}", infer_result(&raw_judge_result));
+    println!("{:?}", infer_result(&config, &raw_judge_result));
 }
 
 fn parse_config(matches: &clap::ArgMatches) -> Config {

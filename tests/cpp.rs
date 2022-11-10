@@ -13,15 +13,14 @@ mod tests {
         compile_config.arg = format!("/usr/bin/g++ -g -o {} {}", bin_path, src_path);
 
         let res = run(&compile_config).unwrap().unwrap();
-        println!("{:?}", infer_result(&res));
+        println!("{:?}", infer_result(&compile_config, &res));
 
         bin_path
     }
 
     #[test]
     fn test_compile() {
-        let bin_path = compile("hello");
-        println!("Bin_Path: {}", bin_path);
+        compile("hello");
     }
 
     #[test]
@@ -45,6 +44,6 @@ mod tests {
         };
 
         let res = run(&runner_config).unwrap().unwrap();
-        println!("{:?}", infer_result(&res));
+        println!("{:?}", infer_result(&runner_config, &res));
     }
 }

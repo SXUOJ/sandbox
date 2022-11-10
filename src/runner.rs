@@ -1,10 +1,8 @@
-use nix::libc::{c_int, rusage, WEXITSTATUS, WTERMSIG};
+use nix::libc::{c_int, rusage};
 use std::time::Duration;
 #[derive(Debug)]
 pub struct RawJudgeResult {
     pub exit_status: c_int,
-    pub exit_signal: c_int,
-    pub exit_code: c_int,
     pub real_time_cost: Duration,
     pub resource_usage: rusage,
 }
@@ -34,8 +32,6 @@ pub fn run(
 
             Ok(Some(RawJudgeResult {
                 exit_status: status,
-                exit_signal: WTERMSIG(status),
-                exit_code: WEXITSTATUS(status),
                 real_time_cost: start.elapsed(),
                 resource_usage: usage,
             }))
@@ -104,7 +100,7 @@ mod tests {
         compile(bin_path, "./examples/src/cpp/hello.cpp");
 
         let res = run(&runner_config).unwrap().unwrap();
-        println!("{:?}", infer_result(&res));
+        println!("{:?}", infer_result(&runner_config, &res));
     }
 
     #[test]
@@ -132,7 +128,7 @@ mod tests {
         };
 
         let res = run(&runner_config).unwrap().unwrap();
-        println!("{:?}", infer_result(&res));
+        println!("{:?}", infer_result(&runner_config, &res));
     }
 
     #[test]
@@ -160,6 +156,6 @@ mod tests {
         };
 
         let res = run(&runner_config).unwrap().unwrap();
-        println!("{:?}", infer_result(&res));
+        println!("{:?}", infer_result(&runner_config, &res));
     }
 }
