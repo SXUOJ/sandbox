@@ -26,23 +26,25 @@ mod tests {
         Command::new("g++")
             .arg("-g")
             .arg("-o")
-            .arg("./test_cases/bin/cpp/infinite_loop")
-            .arg("./test_cases/src/cpp/infinite_loop.cpp")
+            .arg("./examples/bin/cpp/infinite_loop")
+            .arg("./examples/src/cpp/infinite_loop.cpp")
             .output()
             .expect("Compile Error");
 
-        Command::new("./test_cases/bin/cpp/infinite_loop")
+        Command::new("./examples/bin/cpp/infinite_loop")
             .spawn()
             .unwrap()
             .id()
     }
     #[test]
+    #[ignore]
     fn test_kill_pid() {
         let pid = start_process();
         kill_pid(pid);
     }
 
     #[test]
+    #[ignore]
     fn test_kill_timeout() {
         let pid = start_process();
         timeout_killer(pid, 1000);

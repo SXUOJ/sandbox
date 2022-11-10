@@ -1,4 +1,4 @@
-TEST_BIN_DIR := test_cases/bin
+TEST_BIN_DIR := examples/bin
 
 test: init_test
 	@cargo test
@@ -6,9 +6,9 @@ test: init_test
 init_test: clean
 
 ifeq "$(wildcard $(TEST_BIN_DIR))" ""
-	@mkdir test_cases/bin
-	@mkdir test_cases/bin/c
-	@mkdir test_cases/bin/cpp
+	@mkdir $(TEST_BIN_DIR)
+	@mkdir $(TEST_BIN_DIR)/c
+	@mkdir $(TEST_BIN_DIR)/cpp
 endif
 
 clean:

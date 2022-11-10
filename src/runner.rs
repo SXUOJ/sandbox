@@ -95,24 +95,40 @@ mod tests {
     }
 
     #[test]
+    #[ignore]
+    fn test_run() {
+        let bin_path = "./examples/bin/cpp/hello";
+        let mut runner_config = crate::config::Config::default();
+        runner_config.bin_path = bin_path.to_string();
+
+        compile(bin_path, "./examples/src/cpp/hello.cpp");
+
+        let res = run(&runner_config).unwrap().unwrap();
+        println!("{:?}", infer_result(&res));
+    }
+
+    #[test]
+    #[ignore]
     fn test_read_write() {
         compile(
-            "./test_cases/bin/cpp/hello",
-            "./test_cases/src/cpp/hello.cpp",
+            "./examples/bin/cpp/read_write",
+            "./examples/src/cpp/read_write.cpp",
         );
 
         let runner_config = crate::config::Config {
             code_type: String::from("CPP"),
-            bin_path: String::from("./test_cases/bin/cpp/hello"),
-            input_path: String::from("./test_cases/src/cpp/hello0.in"),
-            output_path: String::from("./test_cases/src/cpp/hello0.out"),
-            error_path: String::from("./test_cases/src/cpp/hello0.err"),
+            bin_path: String::from("./examples/bin/cpp/read_write"),
+            input_path: String::from("./examples/src/cpp/read_write.in"),
+            output_path: String::from("./examples/src/cpp/read_write.out"),
+            error_path: String::from("./examples/src/cpp/read_write.err"),
             real_time_limit: 1000,
             cpu_time_limit: 1000,
             max_memory: 128 * 1024 * 1024,
             max_stack: 16 * 1024,
             max_process_number: 1,
             max_output_size: 256 * 1024,
+            arg: String::new(),
+            env: String::new(),
         };
 
         let res = run(&runner_config).unwrap().unwrap();
@@ -120,24 +136,27 @@ mod tests {
     }
 
     #[test]
+    #[ignore]
     fn test_infinite_loop() {
         compile(
-            "./test_cases/bin/cpp/infinite_loop",
-            "./test_cases/src/cpp/infinite_loop.cpp",
+            "./examples/bin/cpp/infinite_loop",
+            "./examples/src/cpp/infinite_loop.cpp",
         );
 
         let runner_config = crate::config::Config {
             code_type: String::from("CPP"),
-            bin_path: String::from("./test_cases/bin/cpp/infinite_loop"),
-            input_path: String::from("./test_cases/src/cpp/hello0.in"),
-            output_path: String::from("./test_cases/src/cpp/hello0.out"),
-            error_path: String::from("./test_cases/src/cpp/hello0.err"),
+            bin_path: String::from("./examples/bin/cpp/infinite_loop"),
+            input_path: String::new(),
+            output_path: String::new(),
+            error_path: String::new(),
             real_time_limit: 5000,
             cpu_time_limit: 3000,
             max_memory: 128 * 1024,
             max_stack: 16 * 1024,
             max_process_number: 1,
             max_output_size: 256 * 1024,
+            arg: String::new(),
+            env: String::new(),
         };
 
         let res = run(&runner_config).unwrap().unwrap();
