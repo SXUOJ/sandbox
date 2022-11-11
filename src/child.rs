@@ -50,28 +50,28 @@ pub fn child_process(config: &crate::config::Config) -> Result<(), crate::error:
     #[cfg(target_os = "linux")]
     crate::seccomp::load_rules_by_code_type(Some(&config.code_type)).unwrap();
 
-    let arg = config
-        .arg
-        .to_string()
-        .split_whitespace()
-        .map(|s| s.to_string())
-        .collect::<Vec<String>>()
-        .iter()
-        .map(|arg| CString::new(arg.as_str()).unwrap())
-        .collect::<Vec<CString>>();
-
-    let env = config
-        .env
-        .to_string()
-        .split_whitespace()
-        .map(|s| s.to_string())
-        .collect::<Vec<String>>()
-        .iter()
-        .map(|env| CString::new(env.as_str()).unwrap())
-        .collect::<Vec<CString>>();
-
     // exec
-    nix::unistd::execve(&CString::new(config.bin_path.as_str())?, &arg, &env)?;
+    nix::unistd::execve(
+        &CString::new(config.bin_path.as_str())?,
+        &config
+            .arg
+            .to_string()
+            .split_whitespace()
+            .map(|s| s.to_string())
+            .collect::<Vec<String>>()
+            .iter()
+            .map(|arg| CString::new(arg.as_str()).unwrap())
+            .collect::<Vec<CString>>(),
+        &config
+            .env
+            .to_string()
+            .split_whitespace()
+            .map(|s| s.to_string())
+            .collect::<Vec<String>>()
+            .iter()
+            .map(|env| CString::new(env.as_str()).unwrap())
+            .collect::<Vec<CString>>(),
+    )?;
 
     Ok(())
 }
