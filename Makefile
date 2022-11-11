@@ -1,7 +1,7 @@
 TEST_BIN_DIR := examples/bin
 
 test: init_test
-	@cargo test
+	@cargo test -- --nocapture
 
 init_test: clean
 
@@ -13,3 +13,4 @@ endif
 
 clean:
 	@cargo clean
+	@rm -rf $(TEST_BIN_DIR)

@@ -5,6 +5,7 @@ pub struct JudgeResult {
     pub real_time: f64,
     pub cpu_time: f64,
     pub memory: f64,
+    pub error: String,
 }
 
 impl Default for JudgeResult {
@@ -15,6 +16,7 @@ impl Default for JudgeResult {
             real_time: 0.0,
             cpu_time: 0.0,
             memory: 0.0,
+            error: String::new(),
         }
     }
 }
@@ -23,11 +25,14 @@ pub fn infer_result(
     config: &crate::config::Config,
     raw_result: &crate::runner::RawJudgeResult,
 ) -> JudgeResult {
-    use nix::libc::{SIGSEGV, SIGUSR1, WEXITSTATUS, WTERMSIG};
+    use nix::libc::{SIGSEGV, SIGUSR1, WEXITSTATUS, WIFSIGNALED, WTERMSIG};
     let mut result = JudgeResult::default();
 
     result.real_time = raw_result.real_time_cost.as_millis() as f64;
-    result.signal = WTERMSIG(raw_result.exit_status);
+
+    if WIFSIGNALED(raw_result.exit_status) {
+        result.signal = WTERMSIG(raw_result.exit_status)
+    }
 
     if result.signal == SIGUSR1 {
         result.status = Result::SystemError;

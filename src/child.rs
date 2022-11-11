@@ -71,7 +71,7 @@ pub fn child_process(config: &crate::config::Config) -> Result<(), crate::error:
         .collect::<Vec<CString>>();
 
     // exec
-    nix::unistd::execve(&CString::new(config.bin_path.as_str())?, &arg, &env).unwrap();
+    nix::unistd::execve(&CString::new(config.bin_path.as_str())?, &arg, &env)?;
 
     Ok(())
 }

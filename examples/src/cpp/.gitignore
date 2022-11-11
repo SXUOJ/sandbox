@@ -1,2 +1,2 @@
-read_write.out
-read_write.err
+*.out
+*.err
