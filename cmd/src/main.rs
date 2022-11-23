@@ -13,7 +13,10 @@ fn main() {
             arg!(-o --output_path  <OUTPUT_PATH> "Output path.")
                 .value_parser(value_parser!(String)),
         )
-        .arg(arg!(-e --error_path  <ERROR_PATH> "Error output path.").value_parser(value_parser!(String)))
+        .arg(
+            arg!(-e --error_path  <ERROR_PATH> "Error output path.")
+                .value_parser(value_parser!(String)),
+        )
         .arg(
             arg!(-r --real_time_limit  <REAL_TIME_LIMIT> "Real time limit.")
                 .value_parser(value_parser!(u64)),
@@ -39,15 +42,15 @@ fn main() {
     let config = parse_config(&cmd);
     println!("{:?}", config);
 
-    let raw_judge_result = sandbox::runner::run(&config).unwrap().unwrap();
+    let raw_judge_result = core::runner::run(&config).unwrap().unwrap();
     println!(
         "{:?}",
-        sandbox::result::infer_result(&config, &raw_judge_result)
+        core::result::infer_result(&config, &raw_judge_result)
     );
 }
 
-fn parse_config(matches: &clap::ArgMatches) -> sandbox::config::Config {
-    let mut config = sandbox::config::Config::default();
+fn parse_config(matches: &clap::ArgMatches) -> core::config::Config {
+    let mut config = core::config::Config::default();
 
     if matches.contains_id("code_type") {
         config.code_type = matches.get_one::<String>("code_type").unwrap().to_string();

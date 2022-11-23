@@ -1,9 +1,5 @@
-[package]
-name = "sandbox"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-clap="4.0.22"
-nix="0.25"
-libseccomp="0.3"
+[workspace]
+members=[
+	"core",
+	"cmd",
+]
