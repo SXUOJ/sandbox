@@ -4,33 +4,27 @@ option go_package = "judger/pb";
 
 package judger;
 
-// The greeting service definition.
-service Greeter
+service Judger
 {
-	// Sends a greeting
-	rpc SayHello(HelloRequest) returns (HelloReply) { }
+	rpc Ping(PingRequest) returns (PongReply) { }
+	rpc Judge(JudgeRequest) returns (JudgeReply) { }
 }
 
-// The request message containing the user's name.
-message HelloRequest
-{
-	string name = 1;
-}
+message PingRequest { }
 
-// The response message containing the greetings
-message HelloReply
+message PongReply
 {
 	string message = 1;
 }
 
-service Judger
-{
-	rpc Judge(JudgeRequest) returns (JudgeReply) { }
-}
-
 message JudgeRequest
 {
-	string name = 1;
+	string type = 1;
+	string source = 2;
+	string input = 3;
+	string output = 4;
+	uint64 time_limit = 5;
+	uint64 memory_limit = 6;
 }
 
 message JudgeReply

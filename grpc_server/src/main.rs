@@ -1,8 +1,9 @@
-use grpc::judger::greeter_server::GreeterServer;
-use grpc::judger::judger_server::JudgerServer;
+use judge::judger::judger_server::JudgerServer;
 use tonic::transport::Server;
 
-mod grpc;
+mod config;
+mod judge;
+mod langs;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -10,8 +11,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("GreeterServer listening on {}", addr);
 
     Server::builder()
-        .add_service(GreeterServer::new(grpc::greeter::MyGreeter::default()))
-        .add_service(JudgerServer::new(grpc::judge::MyJudger::default()))
+        .add_service(JudgerServer::new(judge::MyJudger::default()))
         .serve(addr)
         .await?;
 
