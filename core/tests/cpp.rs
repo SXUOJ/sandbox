@@ -1,8 +1,9 @@
 #[cfg(test)]
 mod tests {
-    use core::config::Config;
-    use core::result::infer_result;
-    use core::runner::run;
+    use judge_core::config::Config;
+    use judge_core::result::infer_result;
+    use judge_core::result::Result;
+    use judge_core::runner::run;
 
     fn compile(example_name: &str) -> String {
         let bin_path = format!("./examples/bin/cpp/{}", example_name);
@@ -18,7 +19,7 @@ mod tests {
         let res = run(&compile_config).unwrap().unwrap();
         let result = infer_result(&compile_config, &res);
         match result.status {
-            core::result::Result::Success => println!("Compile Success!"),
+            Result::Success => println!("Compile Success!"),
             _ => {
                 println!("[COMPILE]:{}: {:?}", example_name, result);
                 panic!("Compile error!");

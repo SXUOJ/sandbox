@@ -1,4 +1,5 @@
 use clap::{arg, value_parser, Command};
+use judge_core::{config::Config, result, runner};
 
 fn main() {
     let cmd = Command::new("sandbox")
@@ -42,15 +43,12 @@ fn main() {
     let config = parse_config(&cmd);
     println!("{:?}", config);
 
-    let raw_judge_result = core::runner::run(&config).unwrap().unwrap();
-    println!(
-        "{:?}",
-        core::result::infer_result(&config, &raw_judge_result)
-    );
+    let raw_judge_result = runner::run(&config).unwrap().unwrap();
+    println!("{:?}", result::infer_result(&config, &raw_judge_result));
 }
 
-fn parse_config(matches: &clap::ArgMatches) -> core::config::Config {
-    let mut config = core::config::Config::default();
+fn parse_config(matches: &clap::ArgMatches) -> Config {
+    let mut config = Config::default();
 
     if matches.contains_id("code_type") {
         config.code_type = matches.get_one::<String>("code_type").unwrap().to_string();
