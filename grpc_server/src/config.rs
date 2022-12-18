@@ -4,6 +4,8 @@ const WORK_SPACE: &str = "tmp";
 const INPUT: &str = "input.txt";
 const OUTPUT: &str = "output.txt";
 const ANSWER: &str = "answer.txt";
+const COMPILE_ERROR: &str = "cmpile_error.txt";
+const RUN_ERROR: &str = "run_error.txt";
 
 pub struct Config<'a> {
     pub code_type: Option<&'a str>,
@@ -23,11 +25,12 @@ impl<'a> Config<'a> {
         let base_dir = Path::new(WORK_SPACE).join(Uuid::new_v4().simple().to_string());
         create_dir_all(&base_dir).unwrap();
         // set compile config
-        let compile_config = match self.code_type {
+        let mut compile_config = match self.code_type {
             Some("C") => langs::c::C::get_cmpile_config(&base_dir),
             Some("CPP") => langs::cpp::Cpp::get_cmpile_config(&base_dir),
             _ => config::Config::default(),
         };
+        compile_config.error_path = base_dir.join(COMPILE_ERROR).to_str().unwrap().to_string();
 
         // save source
         self.save_source(&compile_config.input_path);
@@ -40,6 +43,7 @@ impl<'a> Config<'a> {
         run_config.bin_path = compile_config.output_path.to_owned();
         run_config.input_path = base_dir.join(INPUT).to_str().unwrap().to_string();
         run_config.output_path = base_dir.join(OUTPUT).to_str().unwrap().to_string();
+        run_config.error_path = base_dir.join(RUN_ERROR).to_str().unwrap().to_string();
 
         Ok((compile_config, run_config))
     }

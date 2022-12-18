@@ -21,8 +21,8 @@ message JudgeRequest
 {
 	string type = 1;
 	string source = 2;
-	string input = 3;
-	string output = 4;
+	repeated string input = 3;
+	repeated string output = 4;
 	uint64 time_limit = 5;
 	uint64 memory_limit = 6;
 }

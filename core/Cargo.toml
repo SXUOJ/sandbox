@@ -6,3 +6,4 @@ edition = "2021"
 [dependencies]
 nix="0.25"
 libseccomp="0.3"
+thiserror = "1.0"

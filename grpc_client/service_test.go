@@ -40,12 +40,19 @@ func TestHello(t *testing.T) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.Judge(ctx, &pb.JudgeRequest{Type: "C", Source: `#include<stdio.h>
+	r, err := c.Judge(ctx, &pb.JudgeRequest{
+		Type: "C",
+		Source: `#include<stdio.h>
 int main(){
 	printf("Hello\n");
 	return 0;
 }
-	`, Input: "input", Output: "output", TimeLimit: 0, MemoryLimit: 0})
+		`,
+		Input:       []string{"input"},
+		Output:      []string{"output"},
+		TimeLimit:   0,
+		MemoryLimit: 0},
+	)
 
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
