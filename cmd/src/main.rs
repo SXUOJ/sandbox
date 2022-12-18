@@ -1,23 +1,23 @@
-use judger::config::Config;
-use judger::result::infer_result;
-use judger::runner::run;
-
 use clap::{arg, value_parser, Command};
+use judge_core::{config::Config, result, runner};
 
 fn main() {
-    let cmd = Command::new("Judger")
+    let cmd = Command::new("sandbox")
         .author("ther")
-        .about("A judger for SXU Online Judge")
-        .version("0.0.1")
+        .about("A sandbox for SXU Online Judge")
+        .version("0.1.0")
         .arg_required_else_help(true)
         .arg(arg!(-t --code_type  <CODE_TYPE> "Code type.").value_parser(value_parser!(String)))
-        .arg(arg!(-b --bin_path  <BIN_PATH> "Bin Path.").value_parser(value_parser!(String)))
-        .arg(arg!(-i --input_path  <INPUT_PATH> "Input Path.").value_parser(value_parser!(String)))
+        .arg(arg!(-b --bin_path  <BIN_PATH> "Bin path.").value_parser(value_parser!(String)))
+        .arg(arg!(-i --input_path  <INPUT_PATH> "Input path.").value_parser(value_parser!(String)))
         .arg(
-            arg!(-o --output_path  <OUTPUT_PATH> "Output Path.")
+            arg!(-o --output_path  <OUTPUT_PATH> "Output path.")
                 .value_parser(value_parser!(String)),
         )
-        .arg(arg!(-e --error_path  <ERROR_PATH> "Error Path.").value_parser(value_parser!(String)))
+        .arg(
+            arg!(-e --error_path  <ERROR_PATH> "Error output path.")
+                .value_parser(value_parser!(String)),
+        )
         .arg(
             arg!(-r --real_time_limit  <REAL_TIME_LIMIT> "Real time limit.")
                 .value_parser(value_parser!(u64)),
@@ -43,8 +43,8 @@ fn main() {
     let config = parse_config(&cmd);
     println!("{:?}", config);
 
-    let raw_judge_result = run(&config).unwrap().unwrap();
-    println!("{:?}", infer_result(&config, &raw_judge_result));
+    let raw_judge_result = runner::run(&config).unwrap().unwrap();
+    println!("{:?}", result::infer_result(&config, &raw_judge_result));
 }
 
 fn parse_config(matches: &clap::ArgMatches) -> Config {

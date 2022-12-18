@@ -1,4 +1,4 @@
-pub fn child_process(config: &crate::config::Config) -> Result<(), crate::error::CoreError> {
+pub fn child_process(config: &crate::config::Config) -> crate::Result<()> {
     // set  rlimit
     #[cfg(target_os = "linux")]
     set_rlimit(&config)?;
