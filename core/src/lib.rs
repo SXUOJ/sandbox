@@ -1,9 +1,11 @@
 pub mod child;
 pub mod config;
 pub mod error;
-pub mod killer;
+mod killer;
 pub mod result;
 pub mod runner;
 
+pub type Result<T> = std::result::Result<T, error::Error>;
+
 #[cfg(target_os = "linux")]
-pub mod seccomp;
+mod seccomp;

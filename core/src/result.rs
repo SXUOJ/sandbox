@@ -21,6 +21,16 @@ impl Default for JudgeResult {
     }
 }
 
+impl std::fmt::Display for JudgeResult {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{{status: {}, signal: {}, real_time: {}, cpu_time: {}, memory: {}, error: {}}}",
+            self.status as i32, self.signal, self.real_time, self.cpu_time, self.memory, self.error,
+        )
+    }
+}
+
 pub fn infer_result(
     config: &crate::config::Config,
     raw_result: &crate::runner::RawJudgeResult,
@@ -73,16 +83,16 @@ pub fn infer_result(
     result
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Result {
-    Success,
-    Accepted,
-    WrongAnswer,
-    // CompileError,
-    RuntimeError,
-    TimeLimitExceed,
-    MemoryLimitExceed,
-    OutputLimitExceed,
-    PresentationError,
-    SystemError,
+    Success = 0,
+    Accepted = 1,
+    WrongAnswer = 2,
+    CompileError = 3,
+    RuntimeError = 4,
+    TimeLimitExceed = 5,
+    MemoryLimitExceed = 6,
+    OutputLimitExceed = 7,
+    PresentationError = 8,
+    SystemError = 9,
 }

@@ -7,9 +7,7 @@ pub struct RawJudgeResult {
     pub resource_usage: rusage,
 }
 
-pub fn run(
-    config: &crate::config::Config,
-) -> Result<Option<RawJudgeResult>, crate::error::CoreError> {
+pub fn run(config: &crate::config::Config) -> crate::Result<Option<RawJudgeResult>> {
     use nix::unistd::{fork, ForkResult};
     use std::time::Instant;
 
