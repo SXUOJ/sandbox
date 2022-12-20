@@ -7,5 +7,5 @@ pub mod runner;
 
 pub type Result<T> = std::result::Result<T, error::Error>;
 
-#[cfg(target_os = "linux")]
+// #[cfg(target_os = "linux")]
 mod seccomp;

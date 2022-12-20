@@ -1,4 +1,4 @@
-use judge_core::config::Config;
+use judge_core::config::{Config, Langs};
 pub struct C {}
 
 impl C {
@@ -8,7 +8,7 @@ impl C {
         let error_path = base_dir.join("compile.err").to_str().unwrap().to_string();
 
         Config {
-            code_type: String::from("C"),
+            code_type: Langs::C,
             bin_path: String::from("/usr/bin/gcc"),
             input_path: input_path.clone().to_str().unwrap().to_string(),
             output_path: output_path.clone().to_str().unwrap().to_string(),

@@ -1,73 +1,80 @@
-mod c;
 mod cpp;
-mod golang;
 
-use libseccomp::{error::SeccompError, ScmpAction, ScmpFilterContext, ScmpSyscall};
+use crate::{config::Langs, Result};
+use libseccomp::{ScmpAction, ScmpFilterContext, ScmpSyscall};
 
-pub fn load_rules_by_code_type(code_type: Option<&str>) -> Result<(), SeccompError> {
+pub fn load_seccomp_rules(code_type: Langs) -> Result<()> {
     match code_type {
-        Some("C") => load_write_list(Box::new(c::Rules {})),
-        Some("CPP") => load_write_list(Box::new(cpp::Rules {})),
-        Some("Golang") => load_black_list(Box::new(golang::Rules {})),
-        _ => Ok(()),
-    }
-}
-
-fn load_write_list(ctx_rules: Box<dyn SeccompCtxRules>) -> Result<(), SeccompError> {
-    let mut ctx = get_default_kill_context().unwrap();
-    for syscall_name in ctx_rules.get_white_list() {
-        ctx.add_rule_exact(ScmpAction::Allow, ScmpSyscall::from_name(syscall_name)?)?;
-    }
-
-    ctx.load()?;
+        Langs::CPP => cpp::C_SECCOMP_RULES.load()?,
+        _ => SeccompFilterConfig::default().load()?,
+    };
     Ok(())
 }
 
-fn load_black_list(ctx_rules: Box<dyn SeccompCtxRules>) -> Result<(), SeccompError> {
-    let mut ctx = get_default_kill_context().unwrap();
-    for syscall_name in ctx_rules.get_black_list() {
-        ctx.add_rule_exact(
-            ScmpAction::KillProcess,
-            ScmpSyscall::from_name(syscall_name)?,
-        )?;
-    }
-
-    ctx.load()?;
-    Ok(())
+#[derive(Debug)]
+pub struct SeccompFilterConfig<'a> {
+    action: ScmpAction,
+    allow_syscall: Vec<&'a str>,
+    ban_syscall: Vec<&'a str>,
+    arch_allow_syscall: Vec<&'a str>,
+    arch_ban_syscall: Vec<&'a str>,
 }
 
-fn get_default_kill_context() -> Result<ScmpFilterContext, SeccompError> {
-    ScmpFilterContext::new_filter(ScmpAction::KillProcess)
-}
-
-trait SeccompCtxRules {
-    fn get_white_list(&self) -> Vec<&'static str> {
-        vec![]
-    }
-    fn get_black_list(&self) -> Vec<&'static str> {
-        vec![]
+impl Default for SeccompFilterConfig<'_> {
+    fn default() -> Self {
+        Self {
+            action: ScmpAction::Allow,
+            allow_syscall: vec![],
+            ban_syscall: vec![],
+            arch_allow_syscall: vec![],
+            arch_ban_syscall: vec![],
+        }
     }
 }
 
-#[cfg(test)]
+impl SeccompFilterConfig<'_> {
+    fn load(&self) -> Result<()> {
+        let mut filter = ScmpFilterContext::new_filter(self.action)?;
+
+        for rule in self.allow_syscall.clone() {
+            filter.add_rule(ScmpAction::Allow, ScmpSyscall::from_name(rule)?)?
+        }
+
+        for rule in self.ban_syscall.clone() {
+            filter.add_rule(ScmpAction::KillProcess, ScmpSyscall::from_name(rule)?)?
+        }
+
+        filter.load()?;
+        Ok(())
+    }
+}
+
 #[cfg(target_os = "linux")]
+#[cfg(test)]
 mod tests {
+    use super::*;
     use nix::{
+        libc,
         sys::wait::waitpid,
-        unistd::{fork, ForkResult},
+        unistd::{fork, write, ForkResult},
     };
 
     #[test]
-    pub fn test_cpp_loader() {
-        use super::*;
-
+    #[ignore]
+    pub fn cpp_seccomp_loader() {
         match unsafe { fork() } {
             Ok(ForkResult::Parent { child, .. }) => {
+                println!(
+                    "Continuing execution in parent process, new child has pid: {}",
+                    child
+                );
                 waitpid(child, None).unwrap();
             }
             Ok(ForkResult::Child) => {
-                load_rules_by_code_type(Some("CPP")).unwrap();
-                unsafe { nix::libc::_exit(0) };
+                write(libc::STDOUT_FILENO, "I'm a new child process\n".as_bytes()).ok();
+                load_seccomp_rules(Langs::CPP).unwrap();
+                write(libc::STDOUT_FILENO, "Load seccomp rules\n".as_bytes()).ok();
+                unsafe { libc::_exit(0) };
             }
             Err(_) => println!("Fork failed"),
         }

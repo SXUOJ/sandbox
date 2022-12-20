@@ -1,4 +1,4 @@
-use judge_core::config::Config;
+use judge_core::config::{Config, Langs};
 pub struct Cpp {}
 
 impl Cpp {
@@ -7,7 +7,7 @@ impl Cpp {
         let output_path = base_dir.join("main");
 
         Config {
-            code_type: String::from("CPP"),
+            code_type: Langs::CPP,
             bin_path: String::from("/usr/bin/g++"),
             input_path: input_path.clone().to_str().unwrap().to_string(),
             output_path: output_path.clone().to_str().unwrap().to_string(),

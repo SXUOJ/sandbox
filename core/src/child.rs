@@ -46,9 +46,9 @@ pub fn child_process(config: &crate::config::Config) -> crate::Result<()> {
     // nix::unistd::setgid(nix::unistd::Gid::from(20))?;
     // nix::unistd::setuid(nix::unistd::Uid::from(501))?;
 
-    // load seccomp rules
+    // TODO: load seccomp rules
     #[cfg(target_os = "linux")]
-    crate::seccomp::load_rules_by_code_type(Some(&config.code_type)).unwrap();
+    crate::seccomp::load_seccomp_rules(config.code_type).unwrap();
 
     // exec
     nix::unistd::execve(
@@ -83,13 +83,17 @@ fn set_rlimit(config: &crate::config::Config) -> Result<(), nix::errno::Errno> {
     if config.cpu_time_limit != 0 {
         setrlimit(
             Resource::RLIMIT_CPU,
-            config.cpu_time_limit / 1000,
-            config.cpu_time_limit / 1000,
+            config.cpu_time_limit / 1000 + 500,
+            config.cpu_time_limit / 1000 + 500,
         )?;
     }
 
     if config.max_memory != 0 {
-        setrlimit(Resource::RLIMIT_AS, config.max_memory, config.max_memory)?;
+        setrlimit(
+            Resource::RLIMIT_AS,
+            config.max_memory,
+            config.max_memory * 2,
+        )?;
     }
 
     if config.max_stack != 0 {

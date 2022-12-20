@@ -1,5 +1,8 @@
 use clap::{arg, value_parser, Command};
-use judge_core::{config::Config, result, runner};
+use judge_core::{
+    config::{Config, Langs},
+    result, runner,
+};
 
 fn main() {
     let cmd = Command::new("sandbox")
@@ -51,7 +54,13 @@ fn parse_config(matches: &clap::ArgMatches) -> Config {
     let mut config = Config::default();
 
     if matches.contains_id("code_type") {
-        config.code_type = matches.get_one::<String>("code_type").unwrap().to_string();
+        let code_type = matches.get_one::<u64>("code_type").unwrap();
+        config.code_type = match code_type {
+            1 => Langs::C,
+            2 => Langs::CPP,
+            3 => Langs::GOLANG,
+            _ => Langs::GENERAL,
+        };
     }
 
     if matches.contains_id("bin_path") {

@@ -1,6 +1,6 @@
 #[derive(Debug)]
 pub struct Config {
-    pub code_type: String,
+    pub code_type: Langs,
     pub bin_path: String,
     pub input_path: String,
     pub output_path: String,
@@ -20,13 +20,13 @@ pub struct Config {
 impl Default for Config {
     fn default() -> Self {
         Self {
-            code_type: String::new(),
+            code_type: Langs::GENERAL,
             bin_path: String::new(),
             input_path: String::new(),
             output_path: String::new(),
             error_path: String::new(),
-            real_time_limit: 1000,
-            cpu_time_limit: 1000,
+            real_time_limit: 0,
+            cpu_time_limit: 0,
             max_memory: 0,
             max_stack: 0,
             max_process_number: 0,
@@ -35,4 +35,12 @@ impl Default for Config {
             env: String::new(),
         }
     }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Langs {
+    GENERAL = 0,
+    C = 1,
+    CPP = 2,
+    GOLANG = 3,
 }
