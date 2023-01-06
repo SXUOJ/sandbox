@@ -40,9 +40,9 @@ impl SeccompFilterConfig<'_> {
             filter.add_rule(ScmpAction::Allow, ScmpSyscall::from_name(rule)?)?
         }
 
-        for rule in self.ban_syscall.clone() {
-            filter.add_rule(ScmpAction::KillProcess, ScmpSyscall::from_name(rule)?)?
-        }
+        // for rule in self.ban_syscall.clone() {
+        // filter.add_rule(ScmpAction::KillProcess, ScmpSyscall::from_name(rule)?)?
+        // }
 
         filter.load()?;
         Ok(())

@@ -9,7 +9,7 @@ pub enum Error {
     #[error(": {0}")]
     FFINulError(#[from] std::ffi::NulError),
 
-    // #[cfg(target_os = "linux")]
+    #[cfg(target_os = "linux")]
     #[error(": {0}")]
     SeccompError(#[from] libseccomp::error::SeccompError),
 }

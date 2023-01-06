@@ -1,16 +1,16 @@
+use std::{
+    ffi::CString,
+    fs::File,
+    io,
+    os::unix::io::{AsRawFd, RawFd},
+};
+
 pub fn child_process(config: &crate::config::Config) -> crate::Result<()> {
     // set  rlimit
     #[cfg(target_os = "linux")]
     set_rlimit(&config)?;
 
     // load input, output, error file path
-    use std::{
-        ffi::CString,
-        fs::File,
-        io,
-        os::unix::io::{AsRawFd, RawFd},
-    };
-
     if !config.input_path.is_empty() {
         let input_file = File::open(&config.input_path)?;
         let input_raw_fd: RawFd = input_file.as_raw_fd();
@@ -46,6 +46,17 @@ pub fn child_process(config: &crate::config::Config) -> crate::Result<()> {
     // nix::unistd::setgid(nix::unistd::Gid::from(20))?;
     // nix::unistd::setuid(nix::unistd::Uid::from(501))?;
 
+    let parse_string_to_cstrings = |string: String| -> Vec<CString> {
+        string
+            .to_string()
+            .split_whitespace()
+            .map(|s| s.to_string())
+            .collect::<Vec<String>>()
+            .iter()
+            .map(|arg| CString::new(arg.as_str()).unwrap())
+            .collect::<Vec<CString>>()
+    };
+
     // TODO: load seccomp rules
     #[cfg(target_os = "linux")]
     crate::seccomp::load_seccomp_rules(config.code_type).unwrap();
@@ -53,24 +64,8 @@ pub fn child_process(config: &crate::config::Config) -> crate::Result<()> {
     // exec
     nix::unistd::execve(
         &CString::new(config.bin_path.as_str())?,
-        &config
-            .arg
-            .to_string()
-            .split_whitespace()
-            .map(|s| s.to_string())
-            .collect::<Vec<String>>()
-            .iter()
-            .map(|arg| CString::new(arg.as_str()).unwrap())
-            .collect::<Vec<CString>>(),
-        &config
-            .env
-            .to_string()
-            .split_whitespace()
-            .map(|s| s.to_string())
-            .collect::<Vec<String>>()
-            .iter()
-            .map(|env| CString::new(env.as_str()).unwrap())
-            .collect::<Vec<CString>>(),
+        &parse_string_to_cstrings(config.arg.clone()),
+        &parse_string_to_cstrings(config.env.clone()),
     )?;
 
     Ok(())
