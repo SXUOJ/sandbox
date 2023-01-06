@@ -1,7 +1,10 @@
 #[cfg(test)]
 mod tests {
-    use judge_core::config::{Config, Langs};
-    use judge_core::result::{infer_result, JudgeResult, Result};
+    use sandbox::core::{
+        config::{Config, Langs},
+        result::{infer_result, JudgeResult, Result},
+        runner,
+    };
 
     fn compile(example_name: &str) -> (String, JudgeResult) {
         let bin_path = format!("./examples/bin/cpp/{}", example_name);
@@ -18,7 +21,7 @@ mod tests {
             bin_path,
             infer_result(
                 &compile_config,
-                &judge_core::runner::run(&compile_config).unwrap().unwrap(),
+                &runner::run(&compile_config).unwrap().unwrap(),
             ),
         )
     }
@@ -40,7 +43,7 @@ mod tests {
     }
 
     fn run(config: &Config) -> JudgeResult {
-        infer_result(&config, &judge_core::runner::run(&config).unwrap().unwrap())
+        infer_result(&config, &runner::run(&config).unwrap().unwrap())
     }
 
     #[test]

@@ -7,7 +7,7 @@ pub struct RawJudgeResult {
     pub resource_usage: rusage,
 }
 
-pub fn run(config: &crate::config::Config) -> crate::Result<Option<RawJudgeResult>> {
+pub fn run(config: &crate::core::config::Config) -> crate::core::Result<Option<RawJudgeResult>> {
     use nix::unistd::{fork, ForkResult};
     use std::time::Instant;
 
@@ -15,7 +15,7 @@ pub fn run(config: &crate::config::Config) -> crate::Result<Option<RawJudgeResul
 
     match unsafe { fork() } {
         Ok(ForkResult::Parent { child, .. }) => {
-            use crate::killer::timeout_killer;
+            use crate::core::killer::timeout_killer;
             use nix::libc::{wait4, WSTOPPED};
             use std::thread;
 
@@ -40,7 +40,7 @@ pub fn run(config: &crate::config::Config) -> crate::Result<Option<RawJudgeResul
             }))
         }
         Ok(ForkResult::Child) => {
-            crate::child::child_process(config)?;
+            crate::core::child::child_process(config)?;
             Ok(None)
         }
         Err(_) => {

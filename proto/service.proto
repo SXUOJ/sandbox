@@ -27,12 +27,13 @@ message JudgeRequest
 	string submit_id = 1;
 	string type = 2;
 	string source = 3;
-	repeated Samples samples = 4;
-	uint64 time_limit = 5;
-	uint64 memory_limit = 6;
+	uint64 time_limit = 4;
+	uint64 memory_limit = 5;
+	repeated Samples samples = 6;
 }
 
 message JudgeReply
 {
-	string message = 1;
+	string submit_id = 1;
+	string message = 2;
 }

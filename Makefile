@@ -1,4 +1,7 @@
-TEST_BIN_DIR := core/examples/bin
+TEST_BIN_DIR := examples/bin
+
+build:
+	@cargo build --release
 
 test: init_test
 	@cargo test -- --nocapture

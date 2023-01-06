@@ -1,5 +1,4 @@
-use judge_core::config;
-
+use crate::core::config;
 const WORK_SPACE: &str = "tmp";
 const INPUT: &str = "input.txt";
 const OUTPUT: &str = "output.txt";
@@ -18,7 +17,7 @@ pub struct Config<'a> {
 
 impl<'a> Config<'a> {
     pub fn init(&self) -> Result<(config::Config, config::Config), ()> {
-        use crate::langs;
+        use super::langs;
         use std::{fs::create_dir_all, path::Path};
         use uuid::Uuid;
 

@@ -1,4 +1,4 @@
-use judge_core::config::{Config, Langs};
+use crate::core::config::{Config, Langs};
 pub struct C {}
 
 impl C {

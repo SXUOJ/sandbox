@@ -19,21 +19,21 @@ impl Judger for MyJudger {
 
     async fn judge(&self, request: Request<JudgeRequest>) -> Result<Response<JudgeReply>, Status> {
         println!("Got a request from {:?}", request.remote_addr());
-        use crate::config::Config;
-        use judge_core::{
+        use crate::core::{
             result::{infer_result, Result},
             runner::run,
         };
+        use crate::grpc::config::Config;
 
         let req = request.into_inner();
-        for i in 0..req.input.len() {
+        for i in 0..req.samples.len() {
             let req_config = Config {
                 code_type: Some(&req.r#type),
                 source: req.source.clone(),
-                input: req.input[i].clone(),
-                output: req.output[i].clone(),
                 time_limit: req.time_limit,
                 memory_limit: req.memory_limit,
+                input: req.samples[i].input.clone(),
+                output: req.samples[i].output.clone(),
             };
             let (compile_config, run_config) = req_config.init().unwrap();
 
@@ -47,6 +47,7 @@ impl Judger for MyJudger {
                 compile_result.status = Result::CompileError;
                 compile_result.error = read_error(compile_config.error_path);
                 return Ok(Response::new(JudgeReply {
+                    submit_id: req.submit_id,
                     message: format!("{}", compile_result),
                 }));
             };
@@ -54,10 +55,12 @@ impl Judger for MyJudger {
             let run_result = infer_result(&run_config, &run(&run_config).unwrap().unwrap());
 
             return Ok(Response::new(JudgeReply {
+                submit_id: req.submit_id,
                 message: format!("{:?}", run_result),
             }));
         }
         Ok(Response::new(JudgeReply {
+            submit_id: req.submit_id,
             message: format!("OK"),
         }))
     }

@@ -5,7 +5,7 @@ use std::{
     os::unix::io::{AsRawFd, RawFd},
 };
 
-pub fn child_process(config: &crate::config::Config) -> crate::Result<()> {
+pub fn child_process(config: &crate::core::config::Config) -> crate::core::Result<()> {
     // set  rlimit
     #[cfg(target_os = "linux")]
     set_rlimit(&config)?;

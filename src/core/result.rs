@@ -32,8 +32,8 @@ impl std::fmt::Display for JudgeResult {
 }
 
 pub fn infer_result(
-    config: &crate::config::Config,
-    raw_result: &crate::runner::RawJudgeResult,
+    config: &crate::core::config::Config,
+    raw_result: &crate::core::runner::RawJudgeResult,
 ) -> JudgeResult {
     use nix::libc::{SIGSEGV, SIGUSR1, WEXITSTATUS, WIFSIGNALED, WTERMSIG};
     let mut result = JudgeResult::default();
