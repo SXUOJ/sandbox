@@ -59,7 +59,7 @@ pub fn child_process(config: &crate::core::config::Config) -> crate::core::Resul
 
     // TODO: load seccomp rules
     #[cfg(target_os = "linux")]
-    crate::seccomp::load_seccomp_rules(config.code_type).unwrap();
+    crate::core::seccomp::load_seccomp_rules(config.code_type).unwrap();
 
     // exec
     nix::unistd::execve(
@@ -72,7 +72,7 @@ pub fn child_process(config: &crate::core::config::Config) -> crate::core::Resul
 }
 
 #[cfg(target_os = "linux")]
-fn set_rlimit(config: &crate::config::Config) -> Result<(), nix::errno::Errno> {
+fn set_rlimit(config: &crate::core::config::Config) -> Result<(), nix::errno::Errno> {
     use nix::sys::resource::{setrlimit, Resource};
 
     if config.cpu_time_limit != 0 {
