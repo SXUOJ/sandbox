@@ -1,0 +1,11 @@
+version: "3"
+services:
+  judger:
+    container_name: oj-judger
+    image: oj-judger:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "50051:50051"
