@@ -26,7 +26,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .arg_required_else_help(true)
                 .arg(
                     arg!(-t --code_type  <CODE_TYPE> "Code type.")
-                        .value_parser(value_parser!(String)),
+                        .value_parser(value_parser!(u64)),
                 )
                 .arg(
                     arg!(-b --bin_path  <BIN_PATH> "Bin path.").value_parser(value_parser!(String)),
