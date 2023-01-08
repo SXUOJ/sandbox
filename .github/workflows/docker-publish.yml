@@ -21,7 +21,7 @@ jobs:
       # Setup
       - name: Setup
         run: |
-          apt-get install -y protobuf-compiler libprotobuf-dev libseccomp-dev
+          sudo apt-get install -y protobuf-compiler libprotobuf-dev libseccomp-dev
           
       # Test
       - name: Test
