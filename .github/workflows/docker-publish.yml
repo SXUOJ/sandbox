@@ -18,6 +18,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      # Setup
+      - name: Setup
+        run: |
+          apt-get install -y protobuf-compiler libprotobuf-dev libseccomp-dev
+          
       # Test
       - name: Test
         run: |
@@ -27,10 +32,12 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t ${TCR_IMAGE_URL}:latest .
-
+          
+      # Login
       - name: Login TCR Registry
         run: |
           docker login ${REPO_URL} --username=${{ secrets.REPO_USERNAME }} --password='${{ secrets.REPO_PASSWORD  }}'
+      
       # Push the Docker image to TCR Registry
       - name: Publish
         run: |
