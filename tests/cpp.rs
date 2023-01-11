@@ -1,9 +1,9 @@
-#[cfg(target_os = "linux")]
+// #[cfg(target_os = "linux")]
 #[cfg(test)]
 mod tests {
     use sandbox::core::{
         config::{Config, Langs},
-        result::{infer_result, JudgeResult, Result},
+        result::{infer_result, JudgeResult, Status},
         runner,
     };
 
@@ -31,7 +31,7 @@ mod tests {
         let (bin_path, compile_result) = compile(example_name);
         assert_eq!(
             compile_result.status,
-            Result::Success,
+            Status::Success,
             "[CE]: `{}`",
             compile_result
         );
@@ -52,7 +52,7 @@ mod tests {
         let (_, compile_config) = compile("hello");
         assert_eq!(
             compile_config.status,
-            Result::Success,
+            Status::Success,
             "[CE]: `{}",
             compile_config
         )
@@ -63,7 +63,7 @@ mod tests {
         let (_, compile_result) = compile("text");
         assert_eq!(
             compile_result.status,
-            Result::RuntimeError,
+            Status::RuntimeError,
             "[CE]: `{}`",
             compile_result
         )
@@ -74,7 +74,7 @@ mod tests {
         let (_, compile_result) = compile("compile_error_0");
         assert_eq!(
             compile_result.status,
-            Result::TimeLimitExceed,
+            Status::TimeLimitExceed,
             "[CE]: `{}`",
             compile_result
         )
@@ -85,7 +85,7 @@ mod tests {
         let (_, compile_result) = compile("compile_error_1");
         assert_eq!(
             compile_result.status,
-            Result::RuntimeError,
+            Status::RuntimeError,
             "[CE]: `{}`",
             compile_result
         )
@@ -96,7 +96,7 @@ mod tests {
         let (_, compile_result) = compile("compile_error_2");
         assert_eq!(
             compile_result.status,
-            Result::RuntimeError,
+            Status::RuntimeError,
             "[CE]: `{}`",
             compile_result
         )
@@ -107,7 +107,7 @@ mod tests {
         let (_, compile_result) = compile("compile_error_3");
         assert_eq!(
             compile_result.status,
-            Result::TimeLimitExceed,
+            Status::TimeLimitExceed,
             "[CE]: `{}`",
             compile_result
         )
@@ -117,14 +117,14 @@ mod tests {
     fn test_infinite_loop() {
         let runner_config = compile_and_get_run_config("infinite_loop");
         let result = run(&runner_config);
-        assert_eq!(result.status, Result::TimeLimitExceed, "{}", result);
+        assert_eq!(result.status, Status::TimeLimitExceed, "{}", result);
     }
 
     #[test]
     fn test_hello() {
         let runner_config = compile_and_get_run_config("hello");
         let result = run(&runner_config);
-        assert_eq!(result.status, Result::Success, "{}", result);
+        assert_eq!(result.status, Status::Success, "{}", result);
     }
 
     #[test]
@@ -133,21 +133,21 @@ mod tests {
         runner_config.input_path = "./examples/src/cpp/read_write.in".to_string();
         runner_config.output_path = "./examples/src/cpp/read_write.out".to_string();
         let result = run(&runner_config);
-        assert_eq!(result.status, Result::Success, "{}", result);
+        assert_eq!(result.status, Status::Success, "{}", result);
     }
 
     #[test]
     fn test_core_dump() {
         let runner_config = compile_and_get_run_config("core_dump");
         let result = run(&runner_config);
-        assert_eq!(result.status, Result::RuntimeError, "{}", result);
+        assert_eq!(result.status, Status::RuntimeError, "{}", result);
     }
 
     #[test]
     fn test_fork() {
         let runner_config = compile_and_get_run_config("fork");
         let result = run(&runner_config);
-        assert_eq!(result.status, Result::RuntimeError, "{}", result);
+        assert_eq!(result.status, Status::RuntimeError, "{}", result);
     }
 
     #[test]
@@ -155,7 +155,7 @@ mod tests {
         let (_, compile_result) = compile("leaks");
         assert_eq!(
             compile_result.status,
-            Result::RuntimeError,
+            Status::RuntimeError,
             "[CE]: `{}`",
             compile_result
         )
@@ -166,13 +166,13 @@ mod tests {
         let mut runner_config = compile_and_get_run_config("memory_alloc");
         runner_config.max_memory = 128 * 1024 * 1024;
         let result = run(&runner_config);
-        assert_eq!(result.status, Result::RuntimeError, "{}", result);
+        assert_eq!(result.status, Status::RuntimeError, "{}", result);
     }
 
     #[test]
     fn test_reboot() {
         let runner_config = compile_and_get_run_config("reboot");
         let result = run(&runner_config);
-        assert_eq!(result.status, Result::RuntimeError, "{}", result);
+        assert_eq!(result.status, Status::RuntimeError, "{}", result);
     }
 }

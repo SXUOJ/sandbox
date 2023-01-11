@@ -1,4 +1,4 @@
-#include <stdlib.h>
+#include <cstdlib>
 
 int main() {
     system("reboot");
