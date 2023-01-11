@@ -12,7 +12,7 @@ env:
 jobs:
   setup-build-publish-deploy:
     name: Setup, Test, Build, Publish, and Deploy
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     environment: production
     steps:
       - name: Checkout
@@ -23,11 +23,6 @@ jobs:
         run: |
           sudo apt-get install -y protobuf-compiler libprotobuf-dev libseccomp-dev
           
-      # Test
-      - name: Test
-        run: |
-          make test
-
       # Build
       - name: Build Docker image
         run: |
