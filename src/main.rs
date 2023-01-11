@@ -6,7 +6,7 @@ use sandbox::{
         config::{Config, Langs},
         result, runner,
     },
-    grpc::judge,
+    grpc,
 };
 
 #[tokio::main]
@@ -25,8 +25,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .about("Command line tool")
                 .arg_required_else_help(true)
                 .arg(
-                    arg!(-t --code_type  <CODE_TYPE> "Code type.")
-                        .value_parser(value_parser!(u64)),
+                    arg!(-t --code_type  <CODE_TYPE> "Code type.").value_parser(value_parser!(u64)),
                 )
                 .arg(
                     arg!(-b --bin_path  <BIN_PATH> "Bin path.").value_parser(value_parser!(String)),
@@ -75,8 +74,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             println!("GreeterServer listening on {}", addr);
 
             Server::builder()
-                .add_service(judge::judger::judger_server::JudgerServer::new(
-                    judge::MyJudger::default(),
+                .add_service(grpc::judger::judger_server::JudgerServer::new(
+                    grpc::MyJudger::default(),
                 ))
                 .serve(addr.parse().unwrap())
                 .await?;

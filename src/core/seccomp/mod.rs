@@ -1,7 +1,7 @@
 mod cpp;
 
 use crate::core::{config::Langs, Result};
-use libseccomp::{ScmpAction, ScmpArgCompare, ScmpCompareOp, ScmpFilterContext, ScmpSyscall};
+use libseccomp::{ScmpAction, ScmpFilterContext, ScmpSyscall};
 pub fn load_seccomp_rules(code_type: Langs) -> Result<()> {
     match code_type {
         Langs::CPP => cpp::C_SECCOMP_RULES.load()?,

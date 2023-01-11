@@ -1,3 +1,6 @@
+use std::fmt::Display;
+
+/// Sanbox core config
 #[derive(Debug)]
 pub struct Config {
     pub code_type: Langs,
@@ -37,10 +40,33 @@ impl Default for Config {
     }
 }
 
+/// Define Languages
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Langs {
     GENERAL = 0,
     C = 1,
     CPP = 2,
     GOLANG = 3,
+}
+
+impl Display for Langs {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Langs::GENERAL => write!(f, "GENERAL"),
+            Langs::C => write!(f, "C"),
+            Langs::CPP => write!(f, "CPP"),
+            Langs::GOLANG => write!(f, "GOLANG"),
+        }
+    }
+}
+impl From<u64> for Langs {
+    fn from(value: u64) -> Self {
+        match value {
+            0 => Langs::GENERAL,
+            1 => Langs::C,
+            2 => Langs::CPP,
+            3 => Langs::GENERAL,
+            _ => Langs::GENERAL,
+        }
+    }
 }
