@@ -17,7 +17,7 @@ message PongReply
 	string message = 1;
 }
 
-message Samples {
+message Sample {
 	string input = 1;
 	string output = 2;
 }
@@ -25,15 +25,25 @@ message Samples {
 message JudgeRequest
 {
 	string submit_id = 1;
-	string type = 2;
+	uint64 type = 2;
 	string source = 3;
 	uint64 time_limit = 4;
 	uint64 memory_limit = 5;
-	repeated Samples samples = 6;
+	repeated Sample samples = 6;
+}
+
+message Result
+{
+	uint64 status = 1;
+	int32 signal = 2;
+	double real_time = 3;
+	double cpu_time = 4;
+	double memory = 5;
+	string error = 6;
 }
 
 message JudgeReply
 {
 	string submit_id = 1;
-	string message = 2;
+	repeated Result results = 2;
 }
