@@ -6,8 +6,8 @@ on:
       - master
 
 env:
-  REPO_URL: hkccr.ccs.tencentyun.com
-  TCR_IMAGE_URL: hkccr.ccs.tencentyun.com/sxu-oj/judger
+  REPO_URL: registry.cn-hangzhou.aliyuncs.com
+  TCR_IMAGE_URL: registry.cn-hangzhou.aliyuncs.com/sxuoj/judger
 
 jobs:
   setup-build-publish-deploy:
