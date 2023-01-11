@@ -20,4 +20,4 @@ RUN apt-get install -y libseccomp-dev
 
 COPY --from=builder /build/target/release/sandbox /
 
-ENTRYPOINT ["/sandbox grpc "0.0.0.0:50051""]
+ENTRYPOINT ["/sandbox grpc [::0]:50051"]
