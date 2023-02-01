@@ -14,7 +14,7 @@ fn get_c_cmpile_config(base_dir: &std::path::PathBuf) -> Config {
 
     Config {
         code_type: Langs::GENERAL,
-        bin_path: String::from("gcc"),
+        bin_path: String::from("/usr/bin/gcc"),
         input_path: input_path.clone().to_str().unwrap().to_string(),
         output_path: output_path.clone().to_str().unwrap().to_string(),
         error_path: String::new(),
@@ -39,7 +39,7 @@ fn get_cpp_cmpile_config(base_dir: &std::path::PathBuf) -> Config {
 
     Config {
         code_type: Langs::GENERAL,
-        bin_path: String::from("g++"),
+        bin_path: String::from("/usr/bin/g++"),
         input_path: input_path.clone().to_str().unwrap().to_string(),
         output_path: output_path.clone().to_str().unwrap().to_string(),
         error_path: String::new(),
