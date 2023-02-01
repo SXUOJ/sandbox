@@ -57,15 +57,23 @@ impl Judger {
         self.init();
 
         let mut results: Vec<JudgeResult> = vec![];
-        let mut compile_result = infer_result(
-            &self.compile_config,
-            &run(&self.compile_config).unwrap().unwrap(),
-        );
+        let compile = run(&self.compile_config);
 
-        if compile_result.status != Status::Success {
-            compile_result.status = Status::CompileError;
-            results.push(compile_result);
-            return results;
+        match compile {
+            Ok(r) => {
+                let mut compile_result = infer_result(&self.compile_config, &r.unwrap());
+                if compile_result.status != Status::Success {
+                    compile_result.status = Status::CompileError;
+                    results.push(compile_result);
+                    return results;
+                }
+            }
+            Err(e) => {
+                let mut compile_result = JudgeResult::default();
+                compile_result.status = Status::SystemError;
+                compile_result.error = e.to_string();
+                return vec![compile_result];
+            }
         }
 
         for i in 1..=self.samples.len() {
