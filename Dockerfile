@@ -16,7 +16,7 @@ RUN cargo build --release
 FROM ubuntu:18.04 as runner
 
 RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y libseccomp-dev 
+RUN apt-get install -y libseccomp-dev g++
 
 COPY --from=builder /build/target/release/sandbox /
 
