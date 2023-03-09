@@ -7,6 +7,7 @@ pub struct Config {
     pub bin_path: String,
     pub input_path: String,
     pub output_path: String,
+    pub answer_path: String,
     pub error_path: String,
 
     pub real_time_limit: u64,
@@ -27,6 +28,7 @@ impl Default for Config {
             bin_path: String::new(),
             input_path: String::new(),
             output_path: String::new(),
+            answer_path: String::new(),
             error_path: String::new(),
             real_time_limit: 8000,
             cpu_time_limit: 5000,

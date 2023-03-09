@@ -1,9 +1,16 @@
-pub mod child;
-pub mod config;
-pub mod error;
+mod child;
+mod cmp;
+mod config;
+mod error;
 mod killer;
-pub mod result;
-pub mod runner;
+mod result;
+mod runner;
+
+pub use cmp::{try_compare, ByteReader, UnixFdReader};
+pub use config::{Config, Langs};
+pub use error::Error;
+pub use result::{infer_result, JudgeResult, Status};
+pub use runner::run;
 
 pub type Result<T> = std::result::Result<T, error::Error>;
 

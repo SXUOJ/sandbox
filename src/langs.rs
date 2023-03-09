@@ -1,4 +1,4 @@
-use crate::core::config::{Config, Langs};
+use super::{Config, Langs};
 
 pub fn get_compile_config(lang: Langs, base_dir: &std::path::PathBuf) -> Config {
     match lang {
@@ -17,6 +17,7 @@ fn get_c_cmpile_config(base_dir: &std::path::PathBuf) -> Config {
         bin_path: String::from("/usr/bin/gcc"),
         input_path: input_path.clone().to_str().unwrap().to_string(),
         output_path: output_path.clone().to_str().unwrap().to_string(),
+        answer_path: String::new(),
         error_path: String::new(),
         real_time_limit: 5000,
         cpu_time_limit: 3000,
@@ -42,6 +43,7 @@ fn get_cpp_cmpile_config(base_dir: &std::path::PathBuf) -> Config {
         bin_path: String::from("/usr/bin/g++"),
         input_path: input_path.clone().to_str().unwrap().to_string(),
         output_path: output_path.clone().to_str().unwrap().to_string(),
+        answer_path: String::new(),
         error_path: String::new(),
         real_time_limit: 5000,
         cpu_time_limit: 3000,

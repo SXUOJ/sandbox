@@ -1,4 +1,4 @@
-use crate::core::config::Config;
+use super::Config;
 use judger::{judger_server::Judger, JudgeReply, JudgeRequest, PingRequest, PongReply};
 use tonic::{Request, Response, Status};
 

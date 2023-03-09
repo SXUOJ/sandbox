@@ -1,12 +1,9 @@
-use crate::core::{
-    config,
-    result::{infer_result, JudgeResult, Status},
-    runner::run,
+use super::{
+    infer_result, run, try_compare, ByteReader, Config, Error, JudgeResult, Status, UnixFdReader,
 };
-
 use crate::langs;
 use std::{
-    fs::{create_dir_all, File},
+    fs::{create_dir_all, metadata, File},
     io::Write,
     path::{Path, PathBuf},
 };
@@ -35,7 +32,7 @@ pub struct Judger {
     pub samples: Vec<Sample>,
 
     pub base_dir: PathBuf,
-    pub compile_config: config::Config,
+    pub compile_config: Config,
 }
 
 impl Judger {
@@ -84,17 +81,24 @@ impl Judger {
             self.save_file(&workspace.join(INPUT), &self.samples[i - 1].input);
             self.save_file(&workspace.join(ANSWER), &self.samples[i - 1].output);
 
-            let mut run_config = config::Config::default();
+            let mut run_config = Config::default();
             run_config.code_type = self.code_type.into();
             run_config.bin_path = self.compile_config.output_path.to_owned();
             run_config.input_path = workspace.join(INPUT).to_str().unwrap().to_string();
             run_config.output_path = workspace.join(OUTPUT).to_str().unwrap().to_string();
+            run_config.answer_path = workspace.join(ANSWER).to_str().unwrap().to_string();
             run_config.error_path = workspace.join(RUN_ERROR).to_str().unwrap().to_string();
 
-            results.push(infer_result(
-                &run_config,
-                &run(&run_config).unwrap().unwrap(),
-            ));
+            let mut res = infer_result(&run_config, &run(&run_config).unwrap().unwrap());
+
+            if res.status != Status::Success {
+                match self.cmp(&run_config) {
+                    Ok(status) => res.status = status,
+                    Err(_) => res.status = Status::SystemError,
+                }
+            }
+
+            results.push(res);
         }
 
         results
@@ -109,5 +113,31 @@ impl Judger {
             .unwrap()
             .write(content.as_bytes())
             .unwrap();
+    }
+
+    fn cmp(&self, config: &Config) -> Result<Status, Error> {
+        let output = File::open(&config.output_path)?;
+        let answer = File::open(&config.answer_path)?;
+
+        let (mut std_reader, mut user_reader) = {
+            #[cfg(unix)]
+            let output_file = UnixFdReader::from_file(output);
+
+            #[cfg(unix)]
+            let answer_file = UnixFdReader::from_file(answer);
+
+            (
+                ByteReader::with_capacity(
+                    metadata(&config.output_path)?.len() as usize,
+                    output_file,
+                ),
+                ByteReader::with_capacity(
+                    metadata(&config.answer_path)?.len() as usize,
+                    answer_file,
+                ),
+            )
+        };
+
+        try_compare(&mut std_reader, &mut user_reader)
     }
 }

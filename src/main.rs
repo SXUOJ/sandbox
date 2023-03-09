@@ -1,13 +1,6 @@
 use clap::{arg, command, value_parser, Command};
+use sandbox::{grpc_judger, infer_result, run, Config, Langs, MyJudger};
 use tonic::transport::Server;
-
-use sandbox::{
-    core::{
-        config::{Config, Langs},
-        result, runner,
-    },
-    grpc,
-};
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -74,8 +67,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             println!("GreeterServer listening on {}", addr);
 
             Server::builder()
-                .add_service(grpc::judger::judger_server::JudgerServer::new(
-                    grpc::MyJudger::default(),
+                .add_service(grpc_judger::judger_server::JudgerServer::new(
+                    MyJudger::default(),
                 ))
                 .serve(addr.parse().unwrap())
                 .await?;
@@ -84,8 +77,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             let config = parse_cmd_config(&cmd_matches);
             println!("{:?}", config);
 
-            let raw_judge_result = runner::run(&config).unwrap().unwrap();
-            println!("{:?}", result::infer_result(&config, &raw_judge_result));
+            let raw_judge_result = run(&config).unwrap().unwrap();
+            println!("{:?}", infer_result(&config, &raw_judge_result));
         }
         _ => unreachable!("Exhausted list of subcommands and subcommand_required prevents `None`"),
     };
