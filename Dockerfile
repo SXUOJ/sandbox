@@ -10,7 +10,7 @@ ENV PATH="/root/.cargo/bin:${PATH}"
 # Build judger
 WORKDIR /build
 COPY . .
-RUN cargo build --release
+RUN cargo build --bin grpc --release
 
 # Runner
 FROM ubuntu:18.04 as runner
@@ -20,4 +20,4 @@ RUN apt-get install -y libseccomp-dev g++
 
 COPY --from=builder /build/target/release/sandbox /
 
-ENTRYPOINT ["/sandbox", "grpc", "[::0]:50051"]
+ENTRYPOINT ["/grpc", "addr", "[::0]:50051"]
