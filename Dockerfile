@@ -20,4 +20,4 @@ RUN apt-get install -y libseccomp-dev g++
 
 COPY --from=builder /build/target/release/grpc /sandbox
 
-ENTRYPOINT ["/sandbox", "addr", "[::0]:50051"]
+ENTRYPOINT ["/sandbox", "--addr", "[::0]:50051"]
