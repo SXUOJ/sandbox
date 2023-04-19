@@ -8,3 +8,5 @@ pub use crate::core::{
     UnixFdReader,
 };
 pub use grpc::{judger as grpc_judger, MyJudger};
+
+pub const WORK_SPACE: &str = "tmp";

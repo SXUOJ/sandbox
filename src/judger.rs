@@ -1,14 +1,13 @@
 use super::{
     infer_result, run, try_compare, ByteReader, Config, Error, JudgeResult, Status, UnixFdReader,
 };
-use crate::langs;
+use crate::{langs, WORK_SPACE};
 use std::{
     fs::{create_dir_all, metadata, File},
     io::Write,
     path::{Path, PathBuf},
 };
 
-const WORK_SPACE: &str = "tmp";
 const INPUT: &str = "input.txt";
 const OUTPUT: &str = "output.txt";
 const ANSWER: &str = "answer.txt";
