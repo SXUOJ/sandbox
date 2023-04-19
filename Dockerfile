@@ -18,6 +18,6 @@ FROM ubuntu:18.04 as runner
 RUN apt-get update && apt-get upgrade -y
 RUN apt-get install -y libseccomp-dev g++
 
-COPY --from=builder /build/target/release/sandbox /
+COPY --from=builder /build/target/release/grpc /sandbox
 
-ENTRYPOINT ["/grpc", "addr", "[::0]:50051"]
+ENTRYPOINT ["/sandbox", "addr", "[::0]:50051"]
