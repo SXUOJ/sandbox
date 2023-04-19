@@ -13,6 +13,6 @@ pub enum Error {
     CompareError(io::Error),
 
     #[cfg(target_os = "linux")]
-    #[error(": {0}")]
+    #[error("SeccompError: {0}")]
     SeccompError(#[from] libseccomp::error::SeccompError),
 }
