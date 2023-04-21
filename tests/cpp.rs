@@ -1,4 +1,4 @@
-// #[cfg(target_os = "linux")]
+#[cfg(target_os = "linux")]
 #[cfg(test)]
 mod tests {
     use sandbox::{infer_result, run, Config, JudgeResult, Langs, Status};

@@ -90,7 +90,7 @@ impl Judger {
 
             let mut res = infer_result(&run_config, &run(&run_config).unwrap().unwrap());
 
-            if res.status != Status::Success {
+            if res.status == Status::Success {
                 match self.cmp(&run_config) {
                     Ok(status) => res.status = status,
                     Err(_) => res.status = Status::SystemError,

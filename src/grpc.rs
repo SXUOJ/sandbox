@@ -12,7 +12,7 @@ pub struct MyJudger {}
 #[tonic::async_trait]
 impl Judger for MyJudger {
     async fn ping(&self, request: Request<PingRequest>) -> Result<Response<PongReply>, Status> {
-        println!("Got a request from {:?}", request.remote_addr());
+        println!("Got a ping request from {:?}", request.remote_addr());
         Ok(Response::new(PongReply {
             message: "pong".to_string(),
         }))
